@@ -12,10 +12,9 @@ function AddNewDish() {
   });
 
   const router = useRouter();
-  const { addRecipe, loading } = UseDishStore((state) => ({
-    addRecipe: state.addRecipe,
-    loading: state.loading,
-  }));
+
+  const addRecipe = UseDishStore((state) => state.addRecipe);
+  const loading = UseDishStore((state) => state.loading);
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
@@ -45,6 +44,7 @@ function AddNewDish() {
 
   return (
     <main className="p-6 max-w-lg mx-auto">
+      <button onClick={()=>router.push('/')} className="w-fit px-4 py-1.5 font-medium tracking-wide cursor-pointer bg-blue-500 hover:bg-blue-800 rounded-md" > Back</button>
       <h1 className="text-2xl font-bold mb-4">➕ Add New Recipe</h1>
       <form onSubmit={handleSubmit} className="flex flex-col gap-4">
         <input

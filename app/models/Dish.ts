@@ -8,6 +8,6 @@ const DishSchema = new mongoose.Schema({
     ingredients: [String],
     steps: [String],
     image: String
-});
+},{ timestamps: true });
 
 export default mongoose.models.Dish || mongoose.model("Dish", DishSchema);

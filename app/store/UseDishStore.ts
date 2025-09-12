@@ -10,13 +10,19 @@ type Recipe = {
 
 type RecipeStore = {
     recipes: Recipe[];
+    selectedRecipe: Recipe | null;
+    searchDish: Recipe[];
     loading: boolean;
     fetchRecipe: ()=>Promise<void>;
     addRecipe: (recipe: Recipe) => Promise<void>;
+    searchRecipe: (name: string) =>Promise<void>;
+    findDishById: (_id: string) => Promise<void>;
 }
 
 export const UseDishStore = create<RecipeStore>((set, get) =>({
     recipes: [],
+    selectedRecipe: null,
+    searchDish: [],
     loading: false,
 
     fetchRecipe: async() =>{
@@ -37,6 +43,30 @@ export const UseDishStore = create<RecipeStore>((set, get) =>({
             if(!res) throw new Error("Fail to add dish");
             set({ loading: false});
             await get().fetchRecipe();
+        } catch (error) {
+            console.log(error);
+            set({ loading: false });
+        }
+    },
+
+    searchRecipe: async(name: string) =>{
+        set({ loading: true });
+        try {
+            const res = await axios.get(`/api/search?name=${encodeURIComponent(name)}`);
+            if(!res) throw new Error("Fail to add dish");
+            set({ loading: false, searchDish: res.data});
+        } catch (error) {
+            console.log(error);
+            set({ loading: false });
+        }
+    },
+
+    findDishById: async(id: string) =>{
+        set({ loading: true });
+        try {
+            const res = await axios.get(`/api/dishes/${id}`);
+            if(!res) throw new Error("Fail to add dish");
+            set({ loading: false, selectedRecipe: res.data});
         } catch (error) {
             console.log(error);
             set({ loading: false });

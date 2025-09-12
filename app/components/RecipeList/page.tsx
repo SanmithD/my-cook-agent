@@ -13,10 +13,10 @@ export const RecipeList = () =>{
     },[]);
 
     return (
-        <div>
+        <div className="flex justify-between" >
             {/* <button className="w-fit px-4 py-1.5 text-2xl font-medium bg-blue-500 cursor-pointer rounded-md border-0" onClick={()=>router.push('/components/new')} >Add New</button> */}
             { loading ? <p>Loading...</p> : (
-                <div>
+                <div className="card" >
                     { recipes.map((data, index) =>(
                         <div key={index} >
                             <h1>{data.name} </h1>
