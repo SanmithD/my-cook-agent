@@ -11,28 +11,33 @@ export const POST = async (
     const dish = await Dish.findById(params.id);
 
     if (!dish) {
-      return NextResponse.json({ message: "Not found" }, { status: 404 });
+      return NextResponse.json({ message: "Dish not found" }, { status: 404 });
     }
 
-    const res = await agent.invoke({
+    const response = await agent.invoke({
       messages: [
         {
           role: "user",
-          content: `I want to cook ${dish.name}. 
-Here are the original ingredients: ${dish.ingredients.join(", ")}. 
-Steps: ${dish.steps.join(", ")}. 
-
-User wants to substitute ingredient with: ${substitute}. 
-Help me cook step by step considering this substitution.`,
+          content: `I want to cook ${dish.name}.
+                    Ingredients: ${dish.ingredients.join(", ")}.
+                    Steps: ${dish.steps.join(", ")}.
+                    Substitute: ${substitute || "no substitutions"}.
+                    Please explain step by step.`,
         },
       ],
     });
 
-    const lastMessage = res.messages[res.messages.length - 1];
+    let resultText = "";
+    if ((response as any).messages?.length) {
+      const aiMessage = (response as any).messages
+        .reverse()
+        .find((m: any) => m.constructor.name === "AIMessageChunk" || m.constructor.name === "AIMessage");
+      if (aiMessage) resultText = aiMessage.content;
+    }
 
-    return NextResponse.json({ result: lastMessage.content }, { status: 200 });
+    return NextResponse.json({ result: resultText }, { status: 200 });
   } catch (error) {
     console.error("Agent error:", error);
-    return NextResponse.json({ message: "Server Error" }, { status: 500 });
+    return NextResponse.json({ message: "Server error" }, { status: 500 });
   }
 };
