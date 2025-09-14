@@ -15,17 +15,18 @@ export const GET = async (req: Request) => {
 
     const { searchParams } = new URL(req.url);
     let category = searchParams.get("category");
+    const page = parseInt(searchParams.get("page") || "1");
+    const limit = parseInt(searchParams.get("limit") || "10");
 
     if (!category || category === "all" || category === "undefined" || category === "null") {
       category = "all";
     }
 
-    let dishes;
-    if (category === "all") {
-      dishes = await Dish.find().sort({ createdAt: -1 });
-    } else {
-      dishes = await Dish.find({ category }).sort({ createdAt: -1 });
-    }
+    const filter = category === "all" ? {} : { category };
+    const dishes = await Dish.find(filter)
+      .sort({ createdAt: -1 })
+      .skip((page - 1) * limit)
+      .limit(limit);
 
     return NextResponse.json(dishes, { status: 200 });
   } catch (error) {

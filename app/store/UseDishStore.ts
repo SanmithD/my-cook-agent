@@ -29,16 +29,17 @@ export const UseDishStore = create<RecipeStore>((set, get) => ({
   loading: false,
   searchLoading: false,
 
-  fetchRecipe: async (category?: string) => {
+  fetchRecipe: async (category?: string, page = 1, limit = 10) => {
   set({ loading: true });
   try {
-    const res = await axios.get(`/api/dishes?category=${category}`);
+    const res = await axios.get(`/api/dishes?category=${category || "all"}&page=${page}&limit=${limit}`);
     set({ loading: false, recipes: res.data });
   } catch (error) {
     console.error("Fetch recipe error:", error);
     set({ loading: false });
   }
 },
+
 
 
   addRecipe: async (formData) => {

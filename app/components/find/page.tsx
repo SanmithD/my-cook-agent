@@ -41,7 +41,7 @@ function SearchPage() {
         </div>
 
         {name.trim() && (
-          <div className="absolute left-0 right-0 mt-2 bg-white border rounded-lg shadow-lg z-50 max-h-72 overflow-y-auto">
+          <div className="absolute left-0 right-0 mt-2 bg-gray-700 border rounded-lg shadow-lg z-50 max-h-72 overflow-y-auto">
             {loading && (
               <p className="p-3 text-gray-500 text-sm">Searching...</p>
             )}
@@ -61,6 +61,7 @@ function SearchPage() {
                     src={dish.image || "/placeholder.jpg"}
                     alt={dish.name}
                     width={30}
+                    unoptimized
                     height={30}
                     className="rounded object-cover"
                   />

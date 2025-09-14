@@ -64,9 +64,9 @@ const handleSpeak = () => {
     <main className="p-6 max-w-7xl mx-auto">
       <button
         onClick={handleBack}
-        className="w-fit mb-6 px-5 py-2 bg-blue-600 text-white font-medium rounded-lg shadow hover:bg-blue-700 transition"
+        className="w-fit mb-6 cursor-pointer px-5 py-2 bg-blue-600 text-white font-medium rounded-lg shadow hover:bg-blue-700 transition"
       >
-        ← Back
+        Back
       </button>
 
       {loading && <p className="text-gray-600">Loading...</p>}
@@ -80,6 +80,7 @@ const handleSpeak = () => {
                   src={recipe.image}
                   alt={recipe.name}
                   fill
+                  unoptimized
                   className="object-cover"
                 />
               </div>
@@ -119,9 +120,9 @@ const handleSpeak = () => {
             <button
               onClick={handleStart}
               disabled={agentLoading}
-              className="bg-green-600 text-white px-5 py-2 rounded-lg shadow hover:bg-green-700 disabled:opacity-50 transition"
+              className="bg-green-600 text-white px-5 py-2 cursor-pointer rounded-lg shadow hover:bg-green-700 disabled:opacity-50 transition"
             >
-              {agentLoading ? "Preparing..." : "Start"}
+              {agentLoading ? <p className="h-3 w-3 rounded-full bg-zinc-900 animate-ping" /> : "Start"}
             </button>
           </div>
 
