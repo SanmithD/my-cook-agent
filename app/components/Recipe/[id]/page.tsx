@@ -23,6 +23,7 @@ function Recipe() {
     useSpeechRecognition();
 
   const [substitute, setSubstitute] = useState("");
+  const [speaking, setSpeaking] = useState(false);
 
   useEffect(() => {
     if (id) findDishById(id as string);
@@ -35,92 +36,113 @@ function Recipe() {
   const handleBack = () => {
     resetAgent();
     router.push("/");
+    stopListening();
   };
 
-  // Speak the agentResult using Web Speech API
-  const handleSpeak = () => {
-    if (!agentResult) return;
+  
+const handleSpeak = () => {
+  if (!agentResult) return;
+
+  if (speaking) {
+    speechSynthesis.cancel();
+    setSpeaking(false);
+  } else {
     const utterance = new SpeechSynthesisUtterance(agentResult);
     utterance.lang = "en-US";
-    utterance.rate = 1; // speed
-    utterance.pitch = 1; // tone
+    utterance.rate = 1;
+    utterance.pitch = 1;
+
+    utterance.onend = () => setSpeaking(false);
+
     speechSynthesis.speak(utterance);
-  };
+    setSpeaking(true);
+  }
+};
+
 
   return (
-    <main className="p-6 max-w-3xl mx-auto">
+    <main className="p-6 max-w-7xl mx-auto">
       <button
         onClick={handleBack}
-        className="w-fit mb-4 px-4 py-2 bg-blue-500 text-white font-medium rounded hover:bg-blue-700"
+        className="w-fit mb-6 px-5 py-2 bg-blue-600 text-white font-medium rounded-lg shadow hover:bg-blue-700 transition"
       >
         ← Back
       </button>
 
-      {loading && <p>Loading...</p>}
+      {loading && <p className="text-gray-600">Loading...</p>}
 
-      {!loading && recipe && (
-        <div className="p-6 border rounded-xl shadow-lg">
-          {recipe.image && (
-            <div className="relative w-full h-64 mb-4 rounded-xl overflow-hidden">
-              <Image
-                src={recipe.image}
-                alt={recipe.name}
-                fill
-                className="object-cover"
-              />
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        {!loading && recipe && (
+          <div className="p-6 border rounded-2xl shadow-md">
+            {recipe.image && (
+              <div className="relative w-full h-64 mb-6 rounded-xl overflow-hidden shadow">
+                <Image
+                  src={recipe.image}
+                  alt={recipe.name}
+                  fill
+                  className="object-cover"
+                />
+              </div>
+            )}
+
+            <h1 className="text-3xl font-bold mb-6">{recipe.name}</h1>
+
+            <section className="mb-6">
+              <h3 className="text-xl font-semibold mb-3">Ingredients</h3>
+              <ul className="list-disc ml-6 space-y-2 text-gray-700">
+                {recipe.ingredients.map((ing, i) => (
+                  <li key={i}>{ing}</li>
+                ))}
+              </ul>
+            </section>
+
+            <section>
+              <h3 className="text-xl font-semibold mb-3">Steps</h3>
+              <ol className="list-decimal ml-6 space-y-2 text-gray-700">
+                {recipe.steps.map((step, i) => (
+                  <li key={i}>{step}</li>
+                ))}
+              </ol>
+            </section>
+          </div>
+        )}
+
+        <div className="p-6 border rounded-2xl shadow-md flex flex-col">
+          <div className="flex gap-3 mb-4">
+            <input
+              type="text"
+              placeholder="Enter substitution (optional)"
+              value={substitute}
+              onChange={(e) => setSubstitute(e.target.value)}
+              className="flex-1 border rounded-lg px-3 py-2 shadow-sm focus:outline-none focus:ring-2 focus:ring-green-500"
+            />
+            <button
+              onClick={handleStart}
+              disabled={agentLoading}
+              className="bg-green-600 text-white px-5 py-2 rounded-lg shadow hover:bg-green-700 disabled:opacity-50 transition"
+            >
+              {agentLoading ? "Preparing..." : "Start"}
+            </button>
+          </div>
+
+          {agentResult && (
+            <div className="mt-4 p-5 border rounded-xl flex-1 overflow-y-auto max-h-[500px]">
+              <div className="flex items-center justify-between mb-3">
+                <h2 className="text-xl font-bold">👩‍🍳 Step-by-Step Guide</h2>
+                <button
+                  onClick={handleSpeak}
+                  className={`${speaking ? 'bg-red-500 hover:bg-red-700' : 'bg-blue-600 hover:bg-blue-700' }  text-white px-3 py-1 rounded-md shadow transition`}
+                >
+                  🔊 { speaking ? "Stop" : "Speak" }
+                </button>
+              </div>
+              <p className="whitespace-pre-line text-gray-500 leading-relaxed">
+                {agentResult}
+              </p>
             </div>
           )}
-          <h1 className="text-3xl font-bold mb-4">{recipe.name}</h1>
-
-          <section className="mb-4">
-            <h3 className="text-xl font-semibold mb-2">Ingredients</h3>
-            <ul className="list-disc ml-6 space-y-1">
-              {recipe.ingredients.map((ing, i) => (
-                <li key={i}>{ing}</li>
-              ))}
-            </ul>
-          </section>
-
-          <section>
-            <h3 className="text-xl font-semibold mb-2">Steps</h3>
-            <ol className="list-decimal ml-6 space-y-1">
-              {recipe.steps.map((step, i) => (
-                <li key={i}>{step}</li>
-              ))}
-            </ol>
-          </section>
         </div>
-      )}
-
-      <div className="mt-6 flex gap-2">
-        <input
-          type="text"
-          placeholder="Enter substitution (optional)"
-          value={substitute}
-          onChange={(e) => setSubstitute(e.target.value)}
-          className="flex-1 border rounded px-3 py-2"
-        />
-        <button
-          onClick={handleStart}
-          disabled={agentLoading}
-          className="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700 disabled:opacity-50"
-        >
-          {agentLoading ? "Preparing..." : "Start"}
-        </button>
       </div>
-
-      {agentResult && (
-        <div className="mt-6 p-4 border rounded-lg max-h-[400px] overflow-y-auto whitespace-pre-line">
-          <h2 className="text-xl font-bold mb-2">👩‍🍳 Step-by-Step Guide</h2>
-          <button
-            onClick={handleSpeak}
-            className="bg-blue-600 text-white px-3 py-1 rounded mb-2 hover:bg-blue-700"
-          >
-            🔊 Speak
-          </button>
-          <p>{agentResult}</p>
-        </div>
-      )}
     </main>
   );
 }

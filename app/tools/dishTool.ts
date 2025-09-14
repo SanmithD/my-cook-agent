@@ -8,6 +8,8 @@ export const dishTool = tool(async(id:string) =>{
         const res = await Dish.findById(id);
         if(!res) return NextResponse.json({ message: "Not found" },{ status: 404 });
 
+        console.log(res);
+
         return res;
     } catch (error) {
         console.log(error);

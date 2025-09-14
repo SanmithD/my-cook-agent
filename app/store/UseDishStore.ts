@@ -14,6 +14,7 @@ type RecipeStore = {
   selectedRecipe: Recipe | null;
   searchDish: Recipe[];
   loading: boolean;
+  searchLoading: boolean;
   fetchRecipe: () => Promise<void>;
   addRecipe: (formData: FormData) => Promise<void>;
   searchRecipe: (name: string) => Promise<void>;
@@ -25,6 +26,7 @@ export const UseDishStore = create<RecipeStore>((set, get) => ({
   selectedRecipe: null,
   searchDish: [],
   loading: false,
+  searchLoading: false,
 
   fetchRecipe: async () => {
     set({ loading: true });
@@ -40,7 +42,7 @@ export const UseDishStore = create<RecipeStore>((set, get) => ({
   addRecipe: async (formData) => {
     set({ loading: true });
     try {
-      await axios.post("/api/dishes", formData); // ✅ Cloudinary + DB handled
+      await axios.post("/api/dishes", formData); 
       set({ loading: false });
       await get().fetchRecipe();
     } catch (error) {
@@ -50,13 +52,13 @@ export const UseDishStore = create<RecipeStore>((set, get) => ({
   },
 
   searchRecipe: async (name: string) => {
-    set({ loading: true });
+    set({ searchLoading: true });
     try {
       const res = await axios.get(`/api/search?name=${encodeURIComponent(name)}`);
-      set({ loading: false, searchDish: res.data });
+      set({ searchLoading: false, searchDish: res.data });
     } catch (error) {
       console.error("Search recipe error:", error);
-      set({ loading: false });
+      set({ searchLoading: false });
     }
   },
 

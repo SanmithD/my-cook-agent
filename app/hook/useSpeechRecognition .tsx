@@ -1,8 +1,9 @@
-    import { useState } from "react";
+import { useRef, useState } from "react";
 
 export const useSpeechRecognition = () => {
   const [listening, setListening] = useState(false);
   const [transcript, setTranscript] = useState("");
+  const recognitionRef = useRef<any>(null);
 
   const startListening = () => {
     if (!("webkitSpeechRecognition" in window || "SpeechRecognition" in window)) {
@@ -12,7 +13,9 @@ export const useSpeechRecognition = () => {
 
     const SpeechRecognition =
       (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
+
     const recognition = new SpeechRecognition();
+    recognitionRef.current = recognition;
 
     recognition.continuous = true;
     recognition.interimResults = true;
@@ -38,10 +41,9 @@ export const useSpeechRecognition = () => {
   };
 
   const stopListening = () => {
-    const SpeechRecognition =
-      (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
-    if (SpeechRecognition) {
-      recognition?.stop();
+    if (recognitionRef.current) {
+      recognitionRef.current.stop();
+      recognitionRef.current = null;
       setListening(false);
     }
   };
