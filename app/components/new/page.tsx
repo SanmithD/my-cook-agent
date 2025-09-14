@@ -9,6 +9,7 @@ function AddNewDish() {
     name: "",
     ingredients: "",
     steps: "",
+    category: "main-course", // ✅ default category
   });
   const [image, setImage] = useState<File | null>(null);
 
@@ -17,7 +18,7 @@ function AddNewDish() {
   const addRecipe = UseDishStore((state) => state.addRecipe);
 
   const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
   ) => {
     const { name, value } = e.target;
     setDishData({ ...dishData, [name]: value });
@@ -36,11 +37,12 @@ function AddNewDish() {
     formData.append("name", dishData.name);
     formData.append("ingredients", dishData.ingredients);
     formData.append("steps", dishData.steps);
+    formData.append("category", dishData.category);
     if (image) {
       formData.append("image", image);
     }
 
-    await addRecipe(formData); // ✅ single call to Cloudinary + DB
+    await addRecipe(formData);
     router.push("/");
   };
 
@@ -86,6 +88,23 @@ function AddNewDish() {
           rows={5}
           required
         />
+
+        {/* ✅ Category Dropdown */}
+        <select
+          name="category"
+          value={dishData.category}
+          onChange={handleChange}
+          className="border p-2 bg-gray-700 rounded"
+          required
+        >
+          <option value="main-course">Main Course</option>
+          <option value="dessert">Dessert</option>
+          <option value="drinks">Drinks</option>
+          <option value="appetizer">Appetizer</option>
+          <option value="salad">Salad</option>
+          <option value="soup">Soup</option>
+          <option value="snacks">Snacks</option>
+        </select>
 
         <input
           type="file"

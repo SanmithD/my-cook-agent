@@ -3,15 +3,16 @@
 import { UseDishStore } from "@/app/store/UseDishStore";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 
 export const RecipeList = () => {
   const router = useRouter();
   const { recipes, fetchRecipe, loading } = UseDishStore();
+  const [selectedCategory, setSelectedCategory] = useState("all");
 
   useEffect(() => {
-    fetchRecipe();
-  }, []);
+    fetchRecipe(selectedCategory === "all" ? undefined : selectedCategory);
+  }, [selectedCategory, fetchRecipe]);
 
   if (loading) {
     return (
@@ -21,21 +22,42 @@ export const RecipeList = () => {
     );
   }
 
-  if (!recipes.length) {
-    return (
-      <div className="flex items-center justify-center h-40">
-        <p className="text-lg font-medium text-gray-400">No recipes found</p>
-      </div>
-    );
-  }
+  // if (!recipes.length) {
+  //   return (
+  //     <div className="flex items-center justify-center h-40">
+  //       <p className="text-lg font-medium text-gray-400">No recipes found</p>
+  //     </div>
+  //   );
+  // }
 
   return (
     <main className="p-6">
-      <div className="flex justify-between items-center mb-3" >
-      <h1 className="text-2xl font-bold mb-6">
-        🍳 Latest Recipes
-      </h1>
-      <button onClick={()=>router.push('/components/new')} className="w-fit px-4 py-2 font-bold tracking-wide rounded-md cursor-pointer bg-blue-500 hover:bg-blue-700" >Add Dish</button>
+      <div className="flex justify-between items-center mb-6">
+        <h1 className="text-[20px] md:text-2xl font-bold">Latest Recipes</h1>
+
+        <div className="flex items-center gap-3">
+          <select
+            value={selectedCategory}
+            onChange={(e) => setSelectedCategory(e.target.value)}
+            className="border bg-gray-700 p-2 rounded-md"
+          >
+            <option value="all">All</option>
+            <option value="main-course">Main Course</option>
+            <option value="dessert">Dessert</option>
+            <option value="drinks">Drinks</option>
+            <option value="appetizer">Appetizer</option>
+            <option value="salad">Salad</option>
+            <option value="soup">Soup</option>
+            <option value="snacks">Snacks</option>
+          </select>
+
+          <button
+            onClick={() => router.push("/components/new")}
+            className="w-fit px-4 py-2 font-bold tracking-wide rounded-md cursor-pointer bg-blue-500 hover:bg-blue-700 text-white"
+          >
+            Add Dish
+          </button>
+        </div>
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">

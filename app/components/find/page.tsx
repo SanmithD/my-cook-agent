@@ -24,10 +24,10 @@ function SearchPage() {
   }, [name, searchRecipe]);
 
   return (
-    <main className="p-6 w-2xl md:w-[70%] mx-auto">
+    <main className="p-6 w-2xl md:w-[65%] mx-auto">
       <div className="relative w-full">
         <div className="flex items-center justify-between w-full mb-4">
-          <h1 className="text-3xl md:text-4xl font-bold italic text-cyan-100">
+          <h1 className="text-2xl md:text-4xl font-bold italic text-cyan-100">
             CookMate
           </h1>
           <input

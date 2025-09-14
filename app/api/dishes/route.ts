@@ -9,10 +9,24 @@ cloudinary.config({
   api_secret: process.env.CLOUDINARY_API_SECRET,
 });
 
-export const GET = async () => {
+export const GET = async (req: Request) => {
   try {
     await connectDB();
-    const dishes = await Dish.find().sort({ createdAt: -1 });
+
+    const { searchParams } = new URL(req.url);
+    let category = searchParams.get("category");
+
+    if (!category || category === "all" || category === "undefined" || category === "null") {
+      category = "all";
+    }
+
+    let dishes;
+    if (category === "all") {
+      dishes = await Dish.find().sort({ createdAt: -1 });
+    } else {
+      dishes = await Dish.find({ category }).sort({ createdAt: -1 });
+    }
+
     return NextResponse.json(dishes, { status: 200 });
   } catch (error) {
     console.error("GET /api/dishes error:", error);
@@ -20,15 +34,38 @@ export const GET = async () => {
   }
 };
 
+
 export const POST = async (req: Request) => {
   try {
     await connectDB();
 
     const formData = await req.formData();
     const name = formData.get("name") as string;
-    const ingredients = (formData.get("ingredients") as string) || "";
-    const steps = (formData.get("steps") as string) || "";
+
+    const ingredientsRaw = (formData.get("ingredients") as string) || "";
+    const stepsRaw = (formData.get("steps") as string) || "";
+
     const file = formData.get("image") as File | null;
+
+    const categoryRaw = formData.get("category");
+    let category =
+      typeof categoryRaw === "string" && categoryRaw.trim() !== ""
+        ? categoryRaw.trim()
+        : "all";
+
+    const validCategories = [
+      "all",
+      "main-course",
+      "dessert",
+      "drinks",
+      "appetizer",
+      "salad",
+      "soup",
+      "snacks",
+    ];
+    if (!validCategories.includes(category)) {
+      category = "all";
+    }
 
     let imageUrl = "";
     if (file) {
@@ -47,16 +84,21 @@ export const POST = async (req: Request) => {
       imageUrl = uploadResult.secure_url;
     }
 
+    const ingredients = ingredientsRaw
+      .split(/,|\r?\n/)
+      .map((i) => i.trim())
+      .filter(Boolean);
+
+    const steps = stepsRaw
+      .split(/\r?\n/) 
+      .map((s) => s.trim())
+      .filter(Boolean);
+
     const newDish = await Dish.create({
       name,
-      ingredients: ingredients
-        .split(",")
-        .map((i) => i.trim())
-        .filter(Boolean),
-      steps: steps
-        .split("\n")
-        .map((s) => s.trim())
-        .filter(Boolean),
+      category, 
+      ingredients,
+      steps,
       image: imageUrl,
     });
 
@@ -66,3 +108,4 @@ export const POST = async (req: Request) => {
     return NextResponse.json({ error: "Failed to add dish" }, { status: 500 });
   }
 };
+
