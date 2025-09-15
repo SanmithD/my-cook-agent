@@ -1,20 +1,26 @@
 import { generateRecipeInstructions } from "@/app/lib/generateRecipeInstructions";
 import { NextRequest, NextResponse } from "next/server";
 
+export const runtime = "nodejs";
+
 export async function POST(
   req: NextRequest,
-  context: { params: Promise<{ id: string }> }
+  ctx: RouteContext<'/api/agent/[id]'>
 ) {
   try {
-    const { substitute } = await req.json();
+    const body = await req.json() as { substitute?: string };
+    const { substitute } = body;
+    const { id } = await ctx.params;
 
-    const { id } = await context.params;
-
-    const text = await generateRecipeInstructions(id, substitute);
+    const text: string = await generateRecipeInstructions(id, substitute);
 
     return NextResponse.json({ result: text }, { status: 200 });
   } catch (error) {
-    console.error("Agent error:", error);
+    if (error instanceof Error) {
+      console.error("Agent error:", error.message);
+      return NextResponse.json({ message: error.message }, { status: 500 });
+    }
+    console.error("Agent unknown error:", error);
     return NextResponse.json({ message: "Server error" }, { status: 500 });
   }
 }
