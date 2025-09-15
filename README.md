@@ -3,7 +3,7 @@
 A recipe management web app built with **Next.js 13 (App Router)**, **MongoDB**, **Zustand**, and **Cloudinary**.  
 You can add, browse, and search recipes with images, categories, and step-by-step instructions.
 
-Live Link - 
+Live Link - https://my-cook-agent.vercel.app/
 ---
 
 ## 📂 Project Structure
