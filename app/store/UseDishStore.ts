@@ -16,36 +16,36 @@ type RecipeStore = {
   searchDish: Recipe[];
   loading: boolean;
   searchLoading: boolean;
-  fetchRecipe: (category: string) => Promise<void>;
+  fetchRecipe: (category?: string, page?: number, limit?: number) => Promise<void>;
   addRecipe: (formData: FormData) => Promise<void>;
   searchRecipe: (name: string) => Promise<void>;
   findDishById: (_id: string) => Promise<void>;
 };
 
-export const UseDishStore = create<RecipeStore>((set, get) => ({
+export const UseDishStore = create<RecipeStore>((set) => ({
   recipes: [],
   selectedRecipe: null,
   searchDish: [],
   loading: false,
   searchLoading: false,
 
-  fetchRecipe: async (category?: string, page = 1, limit = 10) => {
-  set({ loading: true });
-  try {
-    const res = await axios.get(`/api/dishes?category=${category || "all"}&page=${page}&limit=${limit}`);
-    set({ loading: false, recipes: res.data });
-  } catch (error) {
-    console.error("Fetch recipe error:", error);
-    set({ loading: false });
-  }
-},
-
-
+  fetchRecipe: async (category = "all", page = 1, limit = 10) => {
+    set({ loading: true });
+    try {
+      const res = await axios.get(
+        `/api/dishes?category=${category}&page=${page}&limit=${limit}`
+      );
+      set({ loading: false, recipes: res.data });
+    } catch (error) {
+      console.error("Fetch recipe error:", error);
+      set({ loading: false });
+    }
+  },
 
   addRecipe: async (formData) => {
     set({ loading: true });
     try {
-      await axios.post("/api/dishes", formData); 
+      await axios.post("/api/dishes", formData);
       set({ loading: false });
     } catch (error) {
       console.error("Add recipe error:", error);

@@ -1,7 +1,10 @@
 import Dish from "../models/Dish";
 import { agent } from "./cookingAgent";
 
-export async function generateRecipeInstructions(dishId: string, substitute?: string) {
+export async function generateRecipeInstructions(
+  dishId: string,
+  substitute?: string
+) {
   const dish = await Dish.findById(dishId);
   if (!dish) throw new Error("Dish not found");
 
@@ -39,15 +42,32 @@ Please explain step by step in detail.
   });
 
   let resultText = "";
-  if ((response as any).messages?.length) {
-    const aiMessage = (response as any).messages
-      .reverse()
-      .find(
-        (m: any) =>
-          m.constructor.name === "AIMessageChunk" ||
-          m.constructor.name === "AIMessage"
-      );
-    if (aiMessage) resultText = aiMessage.content;
+  const maybeResp = response as unknown;
+  if (
+    typeof maybeResp === "object" &&
+    maybeResp !== null &&
+    "messages" in maybeResp
+  ) {
+    const msgs = (maybeResp as { messages?: unknown }).messages;
+    if (Array.isArray(msgs)) {
+      type Msg = { constructor?: { name?: unknown }; content?: unknown };
+      const aiMessage = msgs
+        .slice()
+        .reverse()
+        .find((m): m is Msg => {
+          return (
+            typeof m === "object" && 
+            m !== null &&
+            typeof (m as Msg).constructor?.name === "string" &&
+            ((m as Msg).constructor!.name === "AIMessageChunk" ||
+              (m as Msg).constructor!.name === "AIMessage")
+          );
+        });
+
+      if (aiMessage && typeof aiMessage.content === "string") {
+        resultText = aiMessage.content;
+      }
+    }
   }
 
   return resultText;

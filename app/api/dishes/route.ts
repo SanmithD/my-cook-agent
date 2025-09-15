@@ -15,8 +15,8 @@ export const GET = async (req: Request) => {
 
     const { searchParams } = new URL(req.url);
     let category = searchParams.get("category");
-    const page = parseInt(searchParams.get("page") || "1");
-    const limit = parseInt(searchParams.get("limit") || "10");
+    const page = parseInt(searchParams.get("page") || "1", 10);
+    const limit = parseInt(searchParams.get("limit") || "10", 10);
 
     if (!category || category === "all" || category === "undefined" || category === "null") {
       category = "all";
@@ -29,19 +29,18 @@ export const GET = async (req: Request) => {
       .limit(limit);
 
     return NextResponse.json(dishes, { status: 200 });
-  } catch (error) {
+  } catch (error: unknown) {
     console.error("GET /api/dishes error:", error);
     return NextResponse.json({ error: "Failed to fetch dishes" }, { status: 500 });
   }
 };
-
 
 export const POST = async (req: Request) => {
   try {
     await connectDB();
 
     const formData = await req.formData();
-    const name = formData.get("name") as string;
+    const name = (formData.get("name") as string) || "";
 
     const ingredientsRaw = (formData.get("ingredients") as string) || "";
     const stepsRaw = (formData.get("steps") as string) || "";
@@ -73,16 +72,18 @@ export const POST = async (req: Request) => {
       const arrayBuffer = await file.arrayBuffer();
       const buffer = Buffer.from(arrayBuffer);
 
-      const uploadResult: any = await new Promise((resolve, reject) => {
+      type CloudinaryResult = { secure_url?: string } | undefined;
+
+      const uploadResult = await new Promise<CloudinaryResult>((resolve, reject) => {
         cloudinary.uploader
           .upload_stream({ folder: "recipes" }, (error, result) => {
             if (error) reject(error);
-            else resolve(result);
+            else resolve(result as CloudinaryResult);
           })
           .end(buffer);
       });
 
-      imageUrl = uploadResult.secure_url;
+      imageUrl = uploadResult?.secure_url ?? "";
     }
 
     const ingredients = ingredientsRaw
@@ -91,22 +92,21 @@ export const POST = async (req: Request) => {
       .filter(Boolean);
 
     const steps = stepsRaw
-      .split(/\r?\n/) 
+      .split(/\r?\n/)
       .map((s) => s.trim())
       .filter(Boolean);
 
     const newDish = await Dish.create({
       name,
-      category, 
+      category,
       ingredients,
       steps,
       image: imageUrl,
     });
 
     return NextResponse.json(newDish, { status: 201 });
-  } catch (error) {
+  } catch (error: unknown) {
     console.error("POST /api/dishes error:", error);
     return NextResponse.json({ error: "Failed to add dish" }, { status: 500 });
   }
 };
-

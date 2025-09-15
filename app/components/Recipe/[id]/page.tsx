@@ -19,7 +19,7 @@ function Recipe() {
   const agentLoading = UseAgentStore((state) => state.agentLoading);
   const agentResult = UseAgentStore((state) => state.agentResult);
 
-  const { listening, transcript, startListening, stopListening } =
+  const { stopListening } =
     useSpeechRecognition();
 
   const [substitute, setSubstitute] = useState("");

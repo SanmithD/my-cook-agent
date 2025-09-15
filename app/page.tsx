@@ -1,7 +1,7 @@
 "use client";
 
 import SearchPage from "./components/find/page";
-import { RecipeList } from "./components/RecipeList/page";
+import RecipeList from "./components/RecipeList/page";
 
 export default function Home() {
   return (

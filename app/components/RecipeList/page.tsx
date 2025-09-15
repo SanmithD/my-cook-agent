@@ -5,7 +5,7 @@ import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
-export const RecipeList = () => {
+export default function RecipeList() {
   const router = useRouter();
   const { recipes, fetchRecipe, loading } = UseDishStore();
   const [page, setPage] = useState(1);
@@ -15,7 +15,7 @@ export const RecipeList = () => {
     setPage(1);
     fetchRecipe(selectedCategory, 1);
   }, [selectedCategory, fetchRecipe]);
-
+  
   useEffect(() => {
     if (page > 1) {
       fetchRecipe(selectedCategory, page);
