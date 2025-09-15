@@ -1,36 +1,108 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# 🍳 CookMate
 
-## Getting Started
+A recipe management web app built with **Next.js 13 (App Router)**, **MongoDB**, **Zustand**, and **Cloudinary**.  
+You can add, browse, and search recipes with images, categories, and step-by-step instructions.
 
-First, run the development server:
+Live Link - 
+---
 
+## 📂 Project Structure
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+
+my-cook-agent/
+├── app/
+│ ├── api/ # API routes (CRUD for dishes, agents, etc.)
+│ ├── components/ 
+│ ├── hook/ 
+│ ├── lib/ 
+│ ├── models/ 
+│ ├── store/ # Zustand stores (global state management)
+│ ├── tools/
+│ ├── layout.tsx 
+│ ├── page.tsx
+│ └── globals.css 
+├── public/
+├── .env.local
+├── next.config.js 
+├── package.json
+├── tsconfig.json
+├── postcss.config.js
+├── eslint.config.mjs 
+└── README.md 
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+---
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## 🚀 Features
 
-## Learn More
+- 📖 View latest recipes by category  
+- 🔍 Search recipes by name  
+- ➕ Add new recipes with images (Cloudinary upload)  
+- ✏️ Update or delete recipes  
+- 🍴 Categorize dishes (main-course, dessert, drinks, etc.)  
+- ⚡ API routes powered by Next.js App Router  
+- 🗄 MongoDB with Mongoose models  
+- 🌐 Global state with Zustand  
 
-To learn more about Next.js, take a look at the following resources:
+---
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## 🛠️ Tech Stack
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+- [Next.js 13](https://nextjs.org/) (App Router)
+- [TypeScript](https://www.typescriptlang.org/)
+- [MongoDB + Mongoose](https://mongoosejs.com/)
+- [Zustand](https://zustand-demo.pmnd.rs/)
+- [Cloudinary](https://cloudinary.com/) (image storage)
+- [TailwindCSS](https://tailwindcss.com/)
 
-## Deploy on Vercel
+---
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## ⚙️ Setup Instructions
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+### 1. Clone the repository
+```bash
+git clone https://github.com/SanmithD/my-cook-agent.git
+cd my-cook-agent
+
+npm install
+# or
+yarn install
+```
+
+# Configure environment variables
+
+# MongoDB connection
+MONGODB_URI=your_mongodb_connection_string
+
+# Cloudinary credentials
+CLOUDINARY_CLOUD_NAME=your_cloud_name
+CLOUDINARY_API_KEY=your_api_key
+CLOUDINARY_API_SECRET=your_api_secret
+
+
+# Available Scripts
+
+npm run dev → Run development server
+
+npm run build → Build for production
+
+npm start → Run production server
+
+npm run lint → Lint with ESLint
+
+# 🤝 Contributing
+
+Contributions are welcome! Please fork the repo and submit a pull request.
+
+# 📜 License
+
+MIT License © Sanmith
+
+🔗 GitHub Repo - https://github.com/SanmithD/my-cook-agent.git
+
+# 👉 CookMate
+
+---
+
+Do you want me to also add a **"Deployment" section** (like Vercel setup with environment variables) so others can quickly deploy your app?
