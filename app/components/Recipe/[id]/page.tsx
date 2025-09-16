@@ -122,7 +122,7 @@ const handleSpeak = () => {
               disabled={agentLoading}
               className="bg-green-600 text-white px-5 py-2 cursor-pointer rounded-lg shadow hover:bg-green-700 disabled:opacity-50 transition"
             >
-              {agentLoading ? <p className="h-3 w-3 rounded-full bg-zinc-900 animate-ping" /> : "Start"}
+              {agentLoading ? <p className="h-3 w-3 rounded-full bg-white animate-ping" /> : "Start"}
             </button>
           </div>
 

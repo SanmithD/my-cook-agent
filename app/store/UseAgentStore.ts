@@ -16,7 +16,8 @@ export const UseAgentStore = create<AgentStore>((set) => ({
     set({ agentLoading: true, agentResult: null });
     try {
       const res = await axios.post(`/api/agent/${id}`, { substitute });
-      set({ agentResult: String(res.data.result || ""), agentLoading: false });
+      const result = res.data?.result ?? "";
+      set({ agentResult: String(result), agentLoading: false });
     } catch (err) {
       console.error("Agent request failed:", err);
       set({ agentLoading: false });
